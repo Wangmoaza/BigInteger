@@ -7,11 +7,18 @@ import java.util.regex.Pattern;
 public class BigInteger
 {
     public static final String QUIT_COMMAND = "quit";
-    public static final String MSG_INVALID_INPUT = "입력이 잘못되었습니다.";
- 
+    public static final String MSG_INVALID_INPUT = "입력이 잘못되었습니다."; 
+    public static final int MAX_RESULT_LEN = 200;
+    public static final int MAX_INPUT_LEN = 100;
+    
+    // fields
+    private int sign = 0; // 1 if positive, -1 if negative
+    private int[] arr;
+    private int digit = 0;
+    
     // implement this
-    public static final Pattern EXPRESSION_PATTERN = Pattern.compile("");
- 
+    public static final Pattern EXPRESSION_PATTERN = Pattern.compile(""); // 이건 뭘까
+    
  
     public BigInteger(int i)
     {
@@ -23,8 +30,13 @@ public class BigInteger
  
     public BigInteger(String s)
     {
+    	// find sign, save to field
+    	// set arr
+    	//
     }
  
+    
+    
     public BigInteger add(BigInteger big)
     {
     }
@@ -45,7 +57,7 @@ public class BigInteger
     static BigInteger evaluate(String input) throws IllegalArgumentException
     {
         // implement here
-        // parse input
+        // parse input, remove white space
         // using regex is allowed
  
         // One possible implementation
@@ -68,7 +80,7 @@ public class BigInteger
  
                     try
                     {
-                        done = processInput(input);
+                        done = processInput(input); // if quit == true, done = true; escape while loop
                     }
                     catch (IllegalArgumentException e)
                     {
