@@ -13,20 +13,19 @@ public class BigInteger
 {
     public static final String QUIT_COMMAND = "quit";
     public static final String MSG_INVALID_INPUT = "입력이 잘못되었습니다."; 
-    public static final int MAX_RESULT_SIZE = 200;
-    public static final int MAX_INPUT_SIZE = 100;
-    
+    public static final int MAX_RESULT_SIZE = 201;
+    public static final int MAX_INPUT_SIZE = 101;
+    public static final Pattern EXPRESSION_PATTERN = Pattern.compile("(?<sign>[[+][-]]?)(?<num>[0-9]+)");
+   
     // fields
     private int sign = 0; // 1 if positive, -1 if negative
-    private int[] intArray; // question: int array로 해도 되는가?
+    private int[] intArray; // only digits (excluding sign)
     private int digit = 0;
     
-    // implement this
-    public static final Pattern EXPRESSION_PATTERN = Pattern.compile(""); // question: 이건 뭘까??
-    
- 
     public BigInteger(int i)
     {
+    	String input = Integer.toString(i);
+    	this(input);
     }
  
     public BigInteger(int[] num1)
@@ -35,9 +34,17 @@ public class BigInteger
  
     public BigInteger(String s)
     {
-    	// find sign, save to field
-    	// set arr
-    	//
+    	Matcher matcher = EXPRESSION_PATTERN.matcher(s);
+    	
+    	if (matcher.find())
+    	{
+        	matcher.group("sign") //여기부터 고친다
+    	}
+
+    	for (char c : s.toCharArray())
+    	{
+    		
+    	}
     }
  
     
@@ -61,9 +68,7 @@ public class BigInteger
     static BigInteger evaluate(String input) throws IllegalArgumentException
     {
      	String spaceRemovedInput = input.replaceAll("\\s", ""); // remove white space
-        String patternStr = "(?<sign>[[+][-]]?)(?<num>[0-9]+)"
-    	Pattern pattern = pattern.compile(patternStr);
-        Matcher matcher = pattern.matcher(spaceRemovedInput);
+        Matcher matcher = EXPRESSION_PATTERN.matcher(spaceRemovedInput);
         String arg1 = "";
         String arg2 = "";
         int operatorIndex = 0;
@@ -83,6 +88,7 @@ public class BigInteger
         BigInteger bigNum1 = new BigInteger(arg1);
         BigInteger bigNum2 = new BigInteger(arg2);
 
+        // evaluate expression
         switch (spaceRemovedInput.charAt(operatorIndex))
         {
         	case '+' : 
