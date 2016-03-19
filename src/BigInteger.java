@@ -18,7 +18,7 @@ public class BigInteger
     public static final Pattern EXPRESSION_PATTERN = Pattern.compile("(?<sign>[[+][-]]?)(?<num>[0-9]+)");
    
     // fields
-    private int sign = 0; // 1 if positive, -1 if negative
+    private char sign;
     private int[] intArray; // only digits (excluding sign)
     private int digit = 0;
     
@@ -36,14 +36,29 @@ public class BigInteger
     {
     	Matcher matcher = EXPRESSION_PATTERN.matcher(s);
     	
+    	// determine sign and digit
     	if (matcher.find())
     	{
-        	matcher.group("sign") //여기부터 고친다
+    		if (matcher.group("sign").equals(""))
+    		{
+    			this.sign = '+';
+    			this.digit = s.length();
+    		}
+    		
+    		else
+    		{
+    			this.sign = matcher.group("sign").charAt(0);
+    			this.digit = s.length() - 1;
+    		}
+        	
     	}
 
-    	for (char c : s.toCharArray())
+    	intArray = new int[this.digit];
+    	
+    	// convert string to int array
+    	for (int i = 0; i < this.digit; i++)
     	{
-    		
+    		intArray[i] = Integer.valueOf(s.charAt(i)) - 48; // char '0' is (int) 48
     	}
     }
  
