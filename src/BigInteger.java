@@ -24,8 +24,7 @@ public class BigInteger
     
     public BigInteger(int i)
     {
-    	String input = Integer.toString(i);
-    	this(input);
+    	this(Integer.toString(i));
     }
  
     public BigInteger(int[] num1)
@@ -39,27 +38,21 @@ public class BigInteger
     	// determine sign and digit
     	if (matcher.find())
     	{
-    		if (matcher.group("sign").equals(""))
-    		{
-    			this.sign = '+';
-    			this.digit = s.length();
-    		}
+    		this.digit = matcher.group("num").length();
     		
+    		if (matcher.group("sign").equals(""))
+    			this.sign = '+';
+
     		else
-    		{
     			this.sign = matcher.group("sign").charAt(0);
-    			this.digit = s.length() - 1;
-    		}
-        	
     	}
 
     	intArray = new int[this.digit];
     	
     	// convert string to int array
     	for (int i = 0; i < this.digit; i++)
-    	{
-    		intArray[i] = Integer.valueOf(s.charAt(i)) - 48; // char '0' is (int) 48
-    	}
+    		intArray[i] = Integer.valueOf(matcher.group("num").charAt(i)) - 48; // char '0' is (int) 48
+
     }
  
     
