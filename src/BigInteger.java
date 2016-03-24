@@ -5,7 +5,7 @@ import java.util.regex.Pattern;
  
  /*
   * 해야될 것:
-  * equals, hashcode method 추가
+  * 
   * 
   */
 
@@ -27,17 +27,17 @@ public class BigInteger
     	this(Integer.toString(i));
     }
  
-    public BigInteger(int[] num1, char sign) // parameter 바꿔도 되나? num1의 크기가 100이 넘을 수도 있나?
+    public BigInteger(int[] num1, char inputSign) // parameter 바꿔도 되나? num1의 크기가 100이 넘을 수도 있나?
     {
     	int i;
-    	this.sign = sign;
-    	this.intArray = new int[MAX_INPUT_SIZE];
+    	sign = inputSign;
+    	intArray = new int[MAX_INPUT_SIZE];
     	
     	for (i = 0; num1[i] != 0; i++); // find the index of first significant digit
-    	this.digit = num1.length - i;
+    	digit = num1.length - i;
     	
     	for (i = 0; i < num1.length; i++)
-    		this.intArray[MAX_INPUT_SIZE - num1.length + i] = num1[i];
+    		intArray[MAX_INPUT_SIZE - num1.length + i] = num1[i];
     }
  
     public BigInteger(String s)
@@ -47,20 +47,20 @@ public class BigInteger
     	// determine sign and digit
     	if (matcher.find())
     	{
-    		this.digit = matcher.group("num").length();
+    		digit = matcher.group("num").length();
     		
     		if (matcher.group("sign").equals(""))
-    			this.sign = '+';
+    			sign = '+';
 
     		else
-    			this.sign = matcher.group("sign").charAt(0);
+    			sign = matcher.group("sign").charAt(0);
     	}
 
     	intArray = new int[MAX_INPUT_SIZE];
     	
     	// convert string to int array
-    	for (int i = 0; i < this.digit; i++)
-    		intArray[i] = Integer.valueOf(matcher.group("num").charAt(i)) - 48; // char '0' is (int) 48
+    	for (int i = 0; i < digit; i++)
+    		intArray[MAX_INPUT_SIZE - digit + i] = Integer.valueOf(matcher.group("num").charAt(i)) - 48; // char '0' is (int) 48
     }
  
     
@@ -69,13 +69,15 @@ public class BigInteger
     	char resultSign;
     	int[] resultArray = new int[MAX_RESULT_SIZE];
     	
-    	if (this.sign == big.getSign())
+    	if (sign == big.getSign())
     	{
-    		
+    		//add two intArrays and set resultArray
+    		resultSign = sign; //set resultSign
     	}
     	
     	else
     	{
+    		
     	}
     }
  
