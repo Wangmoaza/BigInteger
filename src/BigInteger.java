@@ -14,7 +14,7 @@ public class BigInteger
     public static final String QUIT_COMMAND = "quit";
     public static final String MSG_INVALID_INPUT = "입력이 잘못되었습니다."; 
     public static final int MAX_RESULT_SIZE = 201;
-    public static final int MAX_INPUT_SIZE = 101;
+    public static final int MAX_INPUT_SIZE = 100;
     public static final Pattern EXPRESSION_PATTERN = Pattern.compile("(?<sign>[[+][-]]?)(?<num>[0-9]+)");
    
     // fields
@@ -27,8 +27,17 @@ public class BigInteger
     	this(Integer.toString(i));
     }
  
-    public BigInteger(int[] num1)
+    public BigInteger(int[] num1, char sign) // parameter 바꿔도 되나? num1의 크기가 100이 넘을 수도 있나?
     {
+    	int i;
+    	this.sign = sign;
+    	this.intArray = new int[MAX_INPUT_SIZE];
+    	
+    	for (i = 0; num1[i] != 0; i++); // find the index of first significant digit
+    	this.digit = num1.length - i;
+    	
+    	for (i = 0; i < num1.length; i++)
+    		this.intArray[MAX_INPUT_SIZE - num1.length + i] = num1[i];
     }
  
     public BigInteger(String s)
@@ -47,17 +56,27 @@ public class BigInteger
     			this.sign = matcher.group("sign").charAt(0);
     	}
 
-    	intArray = new int[this.digit];
+    	intArray = new int[MAX_INPUT_SIZE];
     	
     	// convert string to int array
     	for (int i = 0; i < this.digit; i++)
     		intArray[i] = Integer.valueOf(matcher.group("num").charAt(i)) - 48; // char '0' is (int) 48
-
     }
  
     
     public BigInteger add(BigInteger big)
     {
+    	char resultSign;
+    	int[] resultArray = new int[MAX_RESULT_SIZE];
+    	
+    	if (this.sign == big.getSign())
+    	{
+    		
+    	}
+    	
+    	else
+    	{
+    	}
     }
  
     public BigInteger subtract(BigInteger big)
@@ -68,6 +87,21 @@ public class BigInteger
     {
     }
  
+    public char getSign()
+    {
+    	return this.sign;
+    }
+    
+    public int[] getArray()
+    {
+    	return this.intArray;
+    }
+    
+    public int getDigit()
+    {
+    	return this.digit;
+    }
+    
     @Override
     public String toString()
     {
@@ -95,20 +129,21 @@ public class BigInteger
         
         BigInteger bigNum1 = new BigInteger(arg1);
         BigInteger bigNum2 = new BigInteger(arg2);
-
+        BigInteger result;
+        
         // evaluate expression
         switch (spaceRemovedInput.charAt(operatorIndex))
         {
         	case '+' : 
-        		BigInteger result = bigNum1.add(bigNum2);
+        		result = bigNum1.add(bigNum2);
         		break;
         
         	case '-' : 
-        		BigInteger result = bigNum1.subtract(bigNum2);
+        		result = bigNum1.subtract(bigNum2);
         		break;
         
         	case '*' : 
-        		BigInteger result = bigNum1.multiply(bigNum2);
+        		result = bigNum1.multiply(bigNum2);
         		break;
         
         	default:
