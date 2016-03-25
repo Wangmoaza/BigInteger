@@ -4,8 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
  
  /*
-  * 해야될 것:
-  * 
+  * 질문할 것:
   * 
   */
 
@@ -13,8 +12,7 @@ public class BigInteger
 {
     public static final String QUIT_COMMAND = "quit";
     public static final String MSG_INVALID_INPUT = "입력이 잘못되었습니다."; 
-    public static final int MAX_RESULT_SIZE = 201;
-    public static final int MAX_INPUT_SIZE = 100;
+    public static final int MAX_SIZE = 200;
     public static final Pattern EXPRESSION_PATTERN = Pattern.compile("(?<sign>[[+][-]]?)(?<num>[0-9]+)");
    
     // fields
@@ -27,62 +25,82 @@ public class BigInteger
     	this(Integer.toString(i));
     }
  
-    public BigInteger(int[] num1, char inputSign) // parameter 바꿔도 되나? num1의 크기가 100이 넘을 수도 있나?
+    public BigInteger(int[] num1, char inputSign)
     {
     	int i;
-    	sign = inputSign;
-    	intArray = new int[MAX_INPUT_SIZE];
+    	this.sign = inputSign;
+    	this.intArray = new int[MAX_SIZE];
     	
     	for (i = 0; num1[i] != 0; i++); // find the index of first significant digit
-    	digit = num1.length - i;
+    	this.digit = num1.length - i;
     	
     	for (i = 0; i < num1.length; i++)
-    		intArray[MAX_INPUT_SIZE - num1.length + i] = num1[i];
+    		this.intArray[MAX_SIZE - num1.length + i] = num1[i];
     }
  
     public BigInteger(String s)
     {
     	Matcher matcher = EXPRESSION_PATTERN.matcher(s);
     	
-    	// determine sign and digit
+    	// determine sign & digit
     	if (matcher.find())
     	{
-    		digit = matcher.group("num").length();
+    		this.digit = matcher.group("num").length();
     		
     		if (matcher.group("sign").equals(""))
-    			sign = '+';
+    			this.sign = '+';
 
     		else
-    			sign = matcher.group("sign").charAt(0);
+    			this.sign = matcher.group("sign").charAt(0);
     	}
 
-    	intArray = new int[MAX_INPUT_SIZE];
+    	this.intArray = new int[MAX_SIZE];
     	
     	// convert string to int array
     	for (int i = 0; i < digit; i++)
-    		intArray[MAX_INPUT_SIZE - digit + i] = Integer.valueOf(matcher.group("num").charAt(i)) - 48; // char '0' is (int) 48
+    		this.intArray[MAX_SIZE - digit + i] = Integer.valueOf(matcher.group("num").charAt(i)) - 48; // char '0' is (int) 48
     }
  
-    
     public BigInteger add(BigInteger big)
     {
     	char resultSign;
-    	int[] resultArray = new int[MAX_RESULT_SIZE];
+    	int[] resultArray = new int[MAX_SIZE];
     	
-    	if (sign == big.getSign())
+    	if (this.sign == big.getSign())
     	{
-    		//add two intArrays and set resultArray
-    		resultSign = sign; //set resultSign
+    		resultArray = addArrays(big.getArray());
+    		resultSign = this.sign;
     	}
     	
     	else
     	{
-    		
+    		resultArray = subtractArrays(big.getArray());
+    		resultSign = // 둘 중 절대값이 큰 수의 부호
     	}
+    	
+    	BigInteger result = new BigInteger(resultArray, resultSign);
+    	return result;
     }
  
     public BigInteger subtract(BigInteger big)
     {
+    	char resultSign;
+    	int[] resultArray = new int[MAX_SIZE];
+    	
+    	if (sign == big.getSign())
+    	{
+    		// call subtractArrays
+    		// set resultSign
+    	}
+    	
+    	else
+    	{
+    		// call addArrays
+    		resultSign = this.sign;
+    	}
+    	
+    	BigInteger result = new BigInteger(resultArray, resultSign);
+    	return result;
     }
  
     public BigInteger multiply(BigInteger big)
@@ -102,6 +120,47 @@ public class BigInteger
     public int getDigit()
     {
     	return this.digit;
+    }
+    
+    private int[] addArrays(int[] intArray)
+    {
+    	int[] resultArray = new int[MAX_SIZE];
+    	int added = 0;
+    	
+    	for (int i = MAX_SIZE -1; i >= 0; i++)
+    	{
+    		added = this.intArray[i] + intArray[i];
+    		
+    	}
+    }
+    
+    private int[] subtractArrays(int[] intArray)
+    {
+    	
+    }
+    
+    public boolean isAbsoluteNotSmaller(BigInteger big)
+    {
+    	if (this.digit > big.digit)
+    		return true;
+    	
+    	else if (this.digit < big.digit)
+    		return false;
+    	
+    	else
+    	{
+    		for (int i = MAX_SIZE - this.digit; i < MAX_SIZE; i++)
+    		{
+    			if (this.intArray[i] > big.getArray()[i])
+    				return true;
+    			
+    			else if (this.intArray[i] < big.getArray()[i])
+    				return false;
+    		}
+    		
+    		return true;
+    	}
+    	
     }
     
     @Override
