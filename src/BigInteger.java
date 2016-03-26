@@ -3,11 +3,6 @@ import java.io.InputStreamReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
  
- /*
-  * 질문할 것:
-  * 
-  */
-
 public class BigInteger
 {
     public static final String QUIT_COMMAND = "quit";
@@ -31,7 +26,7 @@ public class BigInteger
     	this.sign = inputSign;
     	this.intArray = new int[MAX_SIZE];
     	
-    	for (i = 0; num1[i] != 0; i++); // find the index of first significant digit
+    	for (i = 0; num1[i] == 0; i++); // find the index of first significant digit
     	this.digit = num1.length - i;
     	
     	for (i = 0; i < num1.length; i++)
@@ -68,14 +63,19 @@ public class BigInteger
     	
     	if (this.sign == big.getSign())
     	{
-    		resultArray = addArrays(big.getArray());
+    		resultArray = addArrays(big);
     		resultSign = this.sign;
     	}
     	
     	else
     	{
-    		resultArray = subtractArrays(big.getArray());
-    		resultSign = // 둘 중 절대값이 큰 수의 부호
+    		resultArray = subtractArrays(big);
+    		
+    		if (isAbsoluteNotSmaller(big))
+    			resultSign = this.sign;
+    			
+    		else
+    			resultSign = big.getSign();
     	}
     	
     	BigInteger result = new BigInteger(resultArray, resultSign);
@@ -89,13 +89,18 @@ public class BigInteger
     	
     	if (sign == big.getSign())
     	{
-    		// call subtractArrays
-    		// set resultSign
+    		resultArray = subtractArrays(big.getArray());
+    		
+    		if (isAbsoluteNotSmaller(big))
+    			resultSign = this.sign;
+    		
+    		else
+    			resultSign = big.getSign();
     	}
     	
     	else
     	{
-    		// call addArrays
+    		resultArray = addArrays(big.getArray());
     		resultSign = this.sign;
     	}
     	
@@ -105,6 +110,18 @@ public class BigInteger
  
     public BigInteger multiply(BigInteger big)
     {
+    	char resultSign;
+    	int[] resultArray = new int[MAX_SIZE];
+    	int multiplied;
+    	
+    	if (this.sign == big.getSign())
+    		resultSign = '+';
+    	
+    	else
+    		resultSign = '-';
+    	
+    	BigInteger result = new BigInteger(resultArray, resultSign);
+    	return result;
     }
  
     public char getSign()
@@ -122,21 +139,54 @@ public class BigInteger
     	return this.digit;
     }
     
-    private int[] addArrays(int[] intArray)
+    private int[] addArrays(BigInteger big)
     {
     	int[] resultArray = new int[MAX_SIZE];
     	int added = 0;
     	
-    	for (int i = MAX_SIZE -1; i >= 0; i++)
+    	for (int i = MAX_SIZE -1; i > 0; i--) //주의
     	{
-    		added = this.intArray[i] + intArray[i];
-    		
+    		added = this.intArray[i] + big.getArray()[i];
+    		resultArray[i] += added%10;
+    		resultArray[i-1] += added/10;
     	}
+    	
+    	return resultArray;
     }
     
-    private int[] subtractArrays(int[] intArray)
+    private int[] subtractArrays(BigInteger big)
     {
+    	int[] resultArray = new int[MAX_SIZE];
+    	int subtracted = 0;
+    	int[] biggerArray;
+    	int[] smallerArray;
     	
+    	if (isAbsoluteNotSmaller(big))
+    	{
+    		biggerArray = this.intArray;
+    		smallerArray = big.getArray();
+    	}
+    	
+    	else
+    	{
+    		biggerArray = big.getArray();
+    		smallerArray = this.intArray;
+    	}
+    	
+    	for (int i = MAX_SIZE -1; i > 0; i--)
+    	{
+    		subtracted = biggerArray[i] - smallerArray[i];
+    		if (subtracted < 0)
+    		{
+    			resultArray[i] += subtracted + 10;
+    			biggerArray[i-1] -= 1; //주의
+    		}
+    		
+    		else
+    			resultArray[i] += subtracted;
+    	}
+    	
+    	return resultArray;
     }
     
     public boolean isAbsoluteNotSmaller(BigInteger big)
