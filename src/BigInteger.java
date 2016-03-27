@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.lang.Integer;
  
 public class BigInteger
 {
@@ -89,18 +90,18 @@ public class BigInteger
     	
     	if (sign == big.getSign())
     	{
-    		resultArray = subtractArrays(big.getArray());
+    		resultArray = subtractArrays(big);
     		
     		if (isAbsoluteNotSmaller(big))
     			resultSign = this.sign;
     		
     		else
-    			resultSign = big.getSign();
+    			resultSign = getOppositeSign(this.sign);
     	}
     	
     	else
     	{
-    		resultArray = addArrays(big.getArray());
+    		resultArray = addArrays(big);
     		resultSign = this.sign;
     	}
     	
@@ -120,6 +121,19 @@ public class BigInteger
     	else
     		resultSign = '-';
     	
+    	for (int i = 0; i < MAX_SIZE/2; i++)
+    	{
+    		int[] bufferArray = new int[MAX_SIZE];
+    		
+    		for (int j = 0; j < MAX_SIZE/2; j++)
+    		{
+    			multiplied = this.intArray[MAX_SIZE - j - 1] * big.getArray()[MAX_SIZE - i - 1] + bufferArray[MAX_SIZE - j - i - 1];
+    			bufferArray[MAX_SIZE - j - i - 1] = multiplied%10;
+    			bufferArray[MAX_SIZE - j - i - 2] = multiplied/10;
+    		}
+    		
+    		resultArray = addArrays(resultArray, bufferArray);
+    	}
     	BigInteger result = new BigInteger(resultArray, resultSign);
     	return result;
     }
@@ -144,11 +158,30 @@ public class BigInteger
     	int[] resultArray = new int[MAX_SIZE];
     	int added = 0;
     	
-    	for (int i = MAX_SIZE -1; i > 0; i--) //林狼
+    	for (int i = MAX_SIZE -1; i >= 0; i--) //林狼
     	{
-    		added = this.intArray[i] + big.getArray()[i];
-    		resultArray[i] += added%10;
-    		resultArray[i-1] += added/10;
+    		added = resultArray[i] + this.intArray[i] + big.getArray()[i];
+    		resultArray[i] = added%10;
+    		
+    		if (i != 0)
+    			resultArray[i-1] += added/10;
+    	}
+    	
+    	return resultArray;
+    }
+    
+    private int[] addArrays(int[] thisArray, int[] thatArray)
+    {
+    	int[] resultArray = new int[MAX_SIZE];
+    	int added = 0;
+    	
+    	for (int i = MAX_SIZE -1; i >= 0; i--) //林狼
+    	{
+    		added = resultArray[i] + thisArray[i] + thatArray[i];
+    		resultArray[i] = added%10;
+    		
+    		if (i != 0)
+    			resultArray[i-1] = added/10;
     	}
     	
     	return resultArray;
@@ -189,6 +222,14 @@ public class BigInteger
     	return resultArray;
     }
     
+    private char getOppositeSign(char inputSign)
+    {
+    	if (inputSign == '+')
+    		return '-';
+    	else
+    		return '+';
+    }
+    
     public boolean isAbsoluteNotSmaller(BigInteger big)
     {
     	if (this.digit > big.digit)
@@ -216,6 +257,16 @@ public class BigInteger
     @Override
     public String toString()
     {
+    	String returnStr = "";
+    	for (int i = MAX_SIZE - this.digit; i < MAX_SIZE; i++)
+    	{
+    		returnStr = returnStr.concat(Integer.toString(this.intArray[i]));
+    	}
+    	
+    	if (this.sign == '-')
+    		returnStr = "-" + returnStr;
+    	
+    	return returnStr;
     }
  
     static BigInteger evaluate(String input) throws IllegalArgumentException
@@ -259,6 +310,7 @@ public class BigInteger
         
         	default:
         		System.out.println("something wrong with operator input");
+        		result = new BigInteger(0); // 林狼
         		break;
         }
         
