@@ -158,7 +158,7 @@ public class BigInteger
     	int[] resultArray = new int[MAX_SIZE];
     	int added = 0;
     	
-    	for (int i = MAX_SIZE -1; i >= 0; i--) //주의
+    	for (int i = MAX_SIZE -1; i >= 0; i--)
     	{
     		added = resultArray[i] + this.intArray[i] + big.getArray()[i];
     		resultArray[i] = added%10;
@@ -175,7 +175,7 @@ public class BigInteger
     	int[] resultArray = new int[MAX_SIZE];
     	int added = 0;
     	
-    	for (int i = MAX_SIZE -1; i >= 0; i--) //주의
+    	for (int i = MAX_SIZE -1; i >= 0; i--)
     	{
     		added = resultArray[i] + thisArray[i] + thatArray[i];
     		resultArray[i] = added%10;
